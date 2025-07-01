@@ -14,8 +14,18 @@ import {
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const CalendarView = () => {
@@ -62,7 +72,9 @@ const CalendarView = () => {
   };
 
   const getDateKey = (date) => {
-    const fixedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    const fixedDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    );
     return fixedDate.toISOString().split("T")[0];
   };
 
@@ -80,33 +92,48 @@ const CalendarView = () => {
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
     for (let i = 0; i < firstDay.getDay(); i++) days.push(null);
-    for (let d = 1; d <= lastDay.getDate(); d++) days.push(new Date(year, month, d));
+    for (let d = 1; d <= lastDay.getDate(); d++)
+      days.push(new Date(year, month, d));
     return days;
   };
 
   const navigateMonth = (direction) => {
     setIsAnimating(true);
     setTimeout(() => {
-      setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + direction)));
+      setCurrentDate(
+        new Date(currentDate.setMonth(currentDate.getMonth() + direction))
+      );
       setIsAnimating(false);
     }, 150);
   };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case "confirmed": return "border-green-500 bg-green-50";
-      case "pending": return "border-yellow-500 bg-yellow-50";
-      case "cancelled": return "border-red-500 bg-red-50";
-      default: return "border-blue-500 bg-blue-50";
+      case "completed":
+        return "border-green-500 bg-green-50";
+      case "pending":
+        return "border-yellow-500 bg-yellow-50";
+      case "cancelled":
+        return "border-red-500 bg-red-50";
+      case "scheduled":
+        return "border-yellow-500 bg-yellow-50"
+      default:
+        return "border-blue-500 bg-blue-50";
     }
   };
 
   const getStatusDot = (status) => {
     switch (status?.toLowerCase()) {
-      case "confirmed": return "bg-green-500";
-      case "pending": return "bg-yellow-500";
-      case "cancelled": return "bg-red-500";
-      default: return "bg-blue-500";
+      case "completed":
+        return "bg-green-500";
+      case "pending":
+        return "bg-yellow-500";
+      case "cancelled":
+        return "bg-red-500";
+      case "scheduled":
+        return "bg-yellow-500"
+      default:
+        return "bg-blue-500";
     }
   };
 
@@ -133,12 +160,16 @@ const CalendarView = () => {
         <div className="flex justify-between items-center mb-8 bg-white rounded-2xl shadow-lg p-6">
           <button
             onClick={() => navigateMonth(-1)}
-            className="p-3 rounded-xl hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+            className="p-3 rounded-xl hover:bg-gray-100 hover:scale-110 transition-all"
           >
             <ChevronLeft size={24} className="text-gray-600" />
           </button>
 
-          <div className={`text-center transition-all duration-300 ${isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}>
+          <div
+            className={`text-center transition-all ${
+              isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
+            }`}
+          >
             <h2 className="text-2xl font-bold text-gray-800">
               {months[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
@@ -149,7 +180,7 @@ const CalendarView = () => {
 
           <button
             onClick={() => navigateMonth(1)}
-            className="p-3 rounded-xl hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+            className="p-3 rounded-xl hover:bg-gray-100 hover:scale-110 transition-all"
           >
             <ChevronRight size={24} className="text-gray-600" />
           </button>
@@ -158,44 +189,67 @@ const CalendarView = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="grid grid-cols-7 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
             {daysOfWeek.map((day) => (
-              <div key={day} className="p-4 text-center font-semibold text-sm">{day}</div>
+              <div key={day} className="p-4 text-center font-semibold text-sm">
+                {day}
+              </div>
             ))}
           </div>
 
           <div className="grid grid-cols-7 gap-0">
             {getMonthDays().map((date, idx) => {
-              const isToday = date?.toDateString() === new Date().toDateString();
-              const isSelected = selectedDate && date && getDateKey(date) === getDateKey(selectedDate);
+              const isToday =
+                date?.toDateString() === new Date().toDateString();
+              const isSelected =
+                selectedDate &&
+                date &&
+                getDateKey(date) === getDateKey(selectedDate);
               const dayAppointments = date ? getAppointmentsForDate(date) : [];
-              const hasAppointments = dayAppointments.length > 0;
 
               return (
                 <div
                   key={idx}
                   onClick={() => date && setSelectedDate(date)}
-                  className={`h-32 p-3 border border-gray-100 cursor-pointer transition-all duration-200 relative group
+                  className={`h-32 p-3 border border-gray-100 cursor-pointer transition-all relative group
                     ${!date ? "bg-gray-50" : "bg-white hover:bg-gray-50"}
                     ${isToday ? "bg-blue-50 border-blue-200" : ""}
                     ${isSelected ? "bg-blue-100 border-blue-300 shadow-lg" : ""}
-                    ${hasAppointments ? "hover:shadow-md" : ""}`}
+                    ${dayAppointments.length > 0 ? "hover:shadow-md" : ""}`}
                 >
                   {date && (
                     <div className="flex flex-col h-full">
-                      <div className={`flex items-center justify-between mb-2 ${isToday ? "text-blue-600" : "text-gray-700"}`}>
-                        <span className={`font-semibold text-sm ${isToday ? "bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs" : ""}`}>
+                      <div
+                        className={`flex items-center justify-between mb-2 ${
+                          isToday ? "text-blue-600" : "text-gray-700"
+                        }`}
+                      >
+                        <span
+                          className={`font-semibold text-sm ${
+                            isToday
+                              ? "bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                              : ""
+                          }`}
+                        >
                           {date.getDate()}
                         </span>
-                        {hasAppointments && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
+                        {dayAppointments.length > 0 && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        )}
                       </div>
 
                       <div className="flex-1 overflow-hidden">
                         {dayAppointments.slice(0, 2).map((apt) => (
                           <div
                             key={apt.id}
-                            className={`text-xs p-1 mb-1 rounded truncate ${getStatusColor(apt.status)}`}
+                            className={`text-xs p-1 mb-1 rounded truncate ${getStatusColor(
+                              apt.status
+                            )}`}
                           >
                             <div className="flex items-center gap-1">
-                              <div className={`w-1.5 h-1.5 rounded-full ${getStatusDot(apt.status)}`}></div>
+                              <div
+                                className={`w-1.5 h-1.5 rounded-full ${getStatusDot(
+                                  apt.status
+                                )}`}
+                              ></div>
                               <span className="truncate">{apt.title}</span>
                             </div>
                           </div>
@@ -224,7 +278,6 @@ const CalendarView = () => {
                 >
                   <X size={20} />
                 </button>
-
                 <div className="flex items-center gap-3 mb-2">
                   <Calendar size={24} />
                   <h2 className="text-2xl font-bold">
@@ -236,86 +289,108 @@ const CalendarView = () => {
                     })}
                   </h2>
                 </div>
-
                 <p className="text-blue-100">
-                  {getAppointmentsForDate(selectedDate).length} appointment(s) scheduled
+                  {getAppointmentsForDate(selectedDate).length} appointment(s)
+                  scheduled
                 </p>
               </div>
 
               <div className="p-6 max-h-96 overflow-y-auto space-y-4">
-                {getAppointmentsForDate(selectedDate).map((apt) => (
-                  <div
-                    key={apt.id}
-                    className={`p-6 rounded-xl border-l-4 ${getStatusColor(apt.status)}`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-bold text-gray-800">{apt.title}</h3>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {apt.status}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center gap-3 text-gray-600">
-                        <Clock size={16} className="text-blue-500" />
-                        <span>
-                          {new Date(apt.appointmentDate).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                {getAppointmentsForDate(selectedDate).length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm py-12">
+                    No appointments on this date.
+                  </div>
+                ) : (
+                  getAppointmentsForDate(selectedDate).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className={`p-6 rounded-xl border-l-4 ${getStatusColor(
+                        apt.status
+                      )}`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-xl font-bold text-gray-800">
+                          {apt.title}
+                        </h3>
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {apt.status}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-gray-600">
-                        <User size={16} className="text-blue-500" />
-                        <span>{getPatientName(apt.patientId)}</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center gap-3 text-gray-600">
+                          <Clock size={16} className="text-blue-500" />
+                          <span>
+                            {new Date(apt.appointmentDate).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-gray-600">
+                          <User size={16} className="text-blue-500" />
+                          <span>{getPatientName(apt.patientId)}</span>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-gray-600">
+                          <Phone size={16} className="text-blue-500" />
+                          <span>{getPatientContact(apt.patientId)}</span>
+                        </div>
+
+                        {apt.description && (
+                          <div className="md:col-span-2">
+                            <div className="text-sm font-semibold text-gray-700 mb-1">
+                              Description:
+                            </div>
+                            <div className="text-gray-600">{apt.description}</div>
+                          </div>
+                        )}
+
+                        {apt.files && apt.files.length > 0 && (
+                          <div className="md:col-span-2">
+                            <div className="text-sm font-semibold text-gray-700 mb-1">
+                              Files:
+                            </div>
+                            <ul className="list-disc list-inside text-gray-600 space-y-1">
+                              {apt.files.map((file, i) => (
+                                <li key={i}>
+                                  <button
+                                    onClick={() => {
+                                      const link = document.createElement("a");
+                                      link.href = file.url;
+                                      link.target = "_blank";
+                                      link.download = file.name || "file";
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                    }}
+                                    className="text-blue-600 hover:underline"
+                                  >
+                                    📄 {file.name}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {apt.comments && (
+                          <div className="md:col-span-2">
+                            <div className="text-sm font-semibold text-gray-700 mb-1">
+                              Comments:
+                            </div>
+                            <ul className="list-disc list-inside text-gray-600">
+                              {apt.comments}
+                            </ul>
+                          </div>
+                        )}
                       </div>
-
-                      <div className="flex items-center gap-3 text-gray-600">
-                        <Phone size={16} className="text-blue-500" />
-                        <span>{getPatientContact(apt.patientId)}</span>
-                      </div>
-
-                      {apt.notes && (
-                        <div className="flex items-start gap-3 text-gray-600 md:col-span-2">
-                          <FileText size={16} className="text-blue-500 mt-0.5" />
-                          <span>{apt.notes}</span>
-                        </div>
-                      )}
-
-                      {apt.description && (
-                        <div className="md:col-span-2">
-                          <div className="text-sm font-semibold text-gray-700 mb-1">Description:</div>
-                          <div className="text-gray-600">{apt.description}</div>
-                        </div>
-                      )}
-
-                      {apt.files && apt.files.length > 0 && (
-                        <div className="md:col-span-2">
-                          <div className="text-sm font-semibold text-gray-700 mb-1">Files:</div>
-                          <ul className="list-disc list-inside text-gray-600">
-                            {apt.files.map((file, i) => (
-                              <li key={i}>
-                                <a href={file} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                  {file}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {apt.comments && (
-                        <div className="md:col-span-2">
-                          <div className="text-sm font-semibold text-gray-700 mb-1">Comments:</div>
-                          <ul className="list-disc list-inside text-gray-600">
-                            {apt.comments}
-                          </ul>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                ))}
+                  )))}
               </div>
             </div>
           </div>
