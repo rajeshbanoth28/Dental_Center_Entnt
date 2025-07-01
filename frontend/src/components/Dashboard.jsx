@@ -119,21 +119,23 @@ const Dashboard = () => {
                 Admin Panel - Patient & Appointment Management
               </p>
             </div>
-            <button
-              onClick={logout}
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              Logout
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={logout}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Logout
+              </button>
 
-            <button
-              onClick={() => {
-                navigate("/calendar");
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              Calender
-            </button>
+              <button
+                onClick={() => {
+                  navigate("/calendar");
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Calendar
+              </button>
+            </div>
           </div>
         </div>
       </div>
