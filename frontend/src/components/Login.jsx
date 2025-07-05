@@ -12,7 +12,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState("");
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -30,7 +30,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4">
+    
+    <div
+  className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"
+  style={{
+    backgroundImage:
+      "url('https://t4.ftcdn.net/jpg/08/81/68/75/360_F_881687543_VKpcTw3Do5dpElnPlWzFWCCs7cY0NGcT.jpg')",
+     }}
+     >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
@@ -42,7 +49,8 @@ const Login = () => {
           <p className="text-gray-600">Sign in to your account</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-gray-100">
+
           <div className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-2">
@@ -146,6 +154,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 
