@@ -4,7 +4,7 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import PatientView from "./components/PatientView";
 import CalendarView from "./components/CalendarView";
-import SignupPage from "./components/SignpPage";
+import SignupPage from "./components/SignupPage";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
