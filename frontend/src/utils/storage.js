@@ -49,6 +49,7 @@ export const seedData = () => {
         status: "Completed",
         nextDate: "",
         files: [],
+        approvalStatus:"Approved"
       },
     ]);
   }
