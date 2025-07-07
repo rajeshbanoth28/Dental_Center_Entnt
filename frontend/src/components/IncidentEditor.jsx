@@ -26,15 +26,15 @@ const IncidentEditor = ({
     setPatients(getPatients());
     if (editingIncident) {
       setFormData({
-        title: editingIncident.title || "",
-        description: editingIncident.description || "",
-        comments: editingIncident.comments || "",
-        appointmentDate: editingIncident.appointmentDate || "",
-        cost: editingIncident.cost || 0,
+        title: editingIncident?.title || "",
+        description: editingIncident?.description || "",
+        comments: editingIncident?.comments || "",
+        appointmentDate: editingIncident?.appointmentDate || "",
+        cost: editingIncident?.cost || 0,
         treatment: editingIncident.treatment || "",
-        status: editingIncident.status || "Scheduled",
-        nextDate: editingIncident.nextDate || "",
-        files: editingIncident.files || [],
+        status: editingIncident?.status || "Scheduled",
+        nextDate: editingIncident?.nextDate || "",
+        files: editingIncident?.files || [],
         approvalStatus: editingIncident?.approvalStatus || "Pending",
       });
     }
@@ -46,8 +46,23 @@ const IncidentEditor = ({
   const selectedPatient = patients.find((p) => p.id === patientId);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "status" && value === "Completed") {
+      setFormData((prev) => ({
+        ...prev,
+        approvalStatus: "Approved", 
+        [field]: value, 
+      }));
+    }else if (field === "status" && value === "Cancelled") {
+      setFormData((prev) => ({
+        ...prev,
+        approvalStatus: "Rejected",
+        [field]: value,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   };
+  
 
   const handleFileUpload = async (fileList) => {
     setIsLoading(true);
@@ -126,7 +141,7 @@ const IncidentEditor = ({
         files: allFiles,
         createdAt: editingIncident?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        approvalStatus: "Pending",
+        approvalStatus: formData.approvalStatus,
 
       };
       const incidents = getIncidents();
@@ -139,7 +154,7 @@ const IncidentEditor = ({
         updated = [...incidents, incidentData];
       }
       setIncidents(updated);
-      onSave?.();
+      onClose?.();
     } catch (error) {
       console.error("Error saving incident:", error);
     } finally {
