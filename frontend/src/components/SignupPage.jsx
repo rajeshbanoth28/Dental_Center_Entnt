@@ -88,7 +88,13 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 px-4">
+    <div
+      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://t4.ftcdn.net/jpg/08/81/68/75/360_F_881687543_VKpcTw3Do5dpElnPlWzFWCCs7cY0NGcT.jpg')",
+      }}
+    >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
