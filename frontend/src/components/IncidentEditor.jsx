@@ -35,6 +35,7 @@ const IncidentEditor = ({
         status: editingIncident.status || "Scheduled",
         nextDate: editingIncident.nextDate || "",
         files: editingIncident.files || [],
+        approvalStatus: editingIncident?.approvalStatus || "Pending",
       });
     }
   }, [editingIncident]);
@@ -125,6 +126,8 @@ const IncidentEditor = ({
         files: allFiles,
         createdAt: editingIncident?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        approvalStatus: "Pending",
+
       };
       const incidents = getIncidents();
       let updated;
@@ -169,7 +172,7 @@ const IncidentEditor = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
-          {/* Header */}
+        
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-xl">
             <div className="flex justify-between items-start">
               <div>
@@ -191,7 +194,7 @@ const IncidentEditor = ({
           </div>
 
           <div className="p-6 space-y-6">
-            {/* Basic Information */}
+        
             <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                 📋 Basic Information
@@ -255,12 +258,13 @@ const IncidentEditor = ({
                     handleInputChange("comments", e.target.value)
                   }
                   rows={2}
+                  required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
 
-            {/* Post-Appointment Details */}
+          
             {(isPostAppointment ||
               isEditing ||
               formData.status !== "Scheduled") && (
@@ -338,7 +342,7 @@ const IncidentEditor = ({
               </div>
             )}
 
-            {/* File Upload Section */}
+        
             <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
               <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                 📎 Files & Documents
@@ -386,14 +390,14 @@ const IncidentEditor = ({
                 </div>
               </div>
 
-              {/* Display uploaded files */}
+           
               {(formData.files.length > 0 || newFiles.length > 0) && (
                 <div>
                   <h4 className="font-medium text-gray-700 mb-3">
                     Uploaded Files:
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {/* Existing files */}
+                 
                     {formData.files.map((file) => (
                       <div
                         key={file.id}
@@ -432,7 +436,7 @@ const IncidentEditor = ({
                       </div>
                     ))}
 
-                    {/* New files */}
+                   
                     {newFiles.map((file) => (
                       <div
                         key={file.id}
@@ -488,7 +492,7 @@ const IncidentEditor = ({
               )}
             </div>
 
-            {/* Summary Section */}
+        
             {isEditing && (
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <h3 className="text-lg font-semibold mb-3 text-gray-800 flex items-center">
@@ -536,7 +540,7 @@ const IncidentEditor = ({
             )}
           </div>
 
-          {/* Footer */}
+    
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 rounded-b-xl">
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
