@@ -443,12 +443,7 @@ const Dashboard = () => {
                             Delete
                           </button>
                         </div>
-                        <button
-                          onClick={() => setAddingIncidentFor(patient.id)}
-                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm transition-colors"
-                        >
-                          Book Appointment
-                        </button>
+                      
                       </div>
                     </div>
                   )}
