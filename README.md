@@ -6,8 +6,8 @@ This is a **frontend-only React application** for managing a dental center, deve
 
 ##  Deployment
 
-- **Live App:** [Add your deployed link here]
-- **GitHub Repo:** [Add your GitHub link here]
+- **Live App:** https://dental-center-entnt.onrender.com
+- **GitHub Repo:** 
 
 ---
 
@@ -121,7 +121,7 @@ All data is stored in `localStorage`. JSON mock data includes users, patients, a
 
 ##  Submission
 
-- Email the **GitHub repo** and **deployed link** to: `hr@entnt.in`
+- Email the **GitHub repo** and https://dental-center-entnt.onrender.com to: `hr@entnt.in`
 - Deadline: **Monday, 8 July**
 
 ---
