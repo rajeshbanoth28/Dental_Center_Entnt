@@ -22,7 +22,14 @@ const Dashboard = () => {
 
   useEffect(() => {
     setPatientsState(getPatients());
-    setIncidentsState(getIncidents());
+    const storedIncidents = getIncidents();
+    // Ensure approvalStatus is set for all incidents
+    const updatedIncidents = storedIncidents.map((i) => ({
+      ...i,
+      approvalStatus: i.approvalStatus || "Pending",
+    }));
+    setIncidentsState(updatedIncidents);
+    setIncidents(updatedIncidents);
   }, []);
 
   const savePatient = (updated) => {
@@ -46,14 +53,39 @@ const Dashboard = () => {
     setIncidents(filtered);
     setIncidentsState(filtered);
   };
+  const updateApprovalStatus = (id, newStatus) => {
+    const updated = incidents.map((i) =>
+      i.id === id
+        ? {
+            ...i,
+            approvalStatus: newStatus,
+            status:
+              newStatus === "Approved"
+                ? "Scheduled"
+                : newStatus === "Rejected"
+                ? "Cancelled"
+                : i.status,
+          }
+        : i
+    );
+    setIncidents(updated);
+    setIncidentsState(updated);
+    setIncidents(updated);
+  };
+  
 
   const refreshIncidents = () => {
-    setIncidentsState(getIncidents());
+    const stored = getIncidents();
+    const updated = stored.map((i) => ({
+      ...i,
+      approvalStatus: i.approvalStatus || "Pending",
+    }));
+    setIncidentsState(updated);
+    setIncidents(updated);
   };
 
   const navigate = useNavigate();
 
-  // Calculate KPIs
   const revenue = incidents.reduce((sum, i) => sum + (i.cost || 0), 0);
   const pending = incidents.filter(
     (i) => i.status === "Scheduled" || i.status === "In Progress"
@@ -61,19 +93,16 @@ const Dashboard = () => {
   const completed = incidents.filter((i) => i.status === "Completed").length;
   const cancelled = incidents.filter((i) => i.status === "Cancelled").length;
 
-  // Get upcoming appointments (next 10)
   const upcoming = incidents
     .filter((i) => new Date(i.appointmentDate) > new Date())
     .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))
     .slice(0, 10);
 
-  // Get recent appointments (last 10)
   const recent = incidents
     .filter((i) => new Date(i.appointmentDate) <= new Date())
     .sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate))
     .slice(0, 10);
 
-  // Calculate top patients by visits
   const countMap = {};
   incidents.forEach((i) => {
     countMap[i.patientId] = (countMap[i.patientId] || 0) + 1;
@@ -107,7 +136,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+   
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
@@ -141,7 +170,7 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navigation Tabs */}
+      
         <div className="mb-8">
           <nav className="flex space-x-8">
             {["overview", "patients", "appointments"].map((tab) => (
@@ -160,10 +189,10 @@ const Dashboard = () => {
           </nav>
         </div>
 
-        {/* Overview Tab */}
+   
         {activeTab === "overview" && (
           <div className="space-y-8">
-            {/* KPI Cards */}
+       
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <KPICard
                 title="Total Patients"
@@ -198,7 +227,7 @@ const Dashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Upcoming Appointments */}
+            
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">
                   Upcoming Appointments
@@ -242,7 +271,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Top Patients */}
+          
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">
                   Top Patients by Visits
@@ -285,7 +314,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Recent Activity */}
+           
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-xl font-semibold mb-4 text-gray-800">
                 Recent Appointments
@@ -345,7 +374,7 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Patients Tab */}
+    
         {activeTab === "patients" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -429,7 +458,7 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Appointments Tab */}
+      
         {activeTab === "appointments" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -525,6 +554,33 @@ const Dashboard = () => {
                             </span>
                           </td>
                           <td className="py-3 px-4">
+                            {incident.approvalStatus === "Pending" ? (
+                              <div className="flex gap-2">
+                                <button
+                                  className="bg-green-500 text-white text-sm px-3 py-1 rounded hover:bg-green-600"
+                                  onClick={() =>
+                                    updateApprovalStatus(incident.id, "Approved")
+                                  }
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  className="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600"
+                                  onClick={() =>
+                                    updateApprovalStatus(incident.id, "Rejected")
+                                  }
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-gray-600">
+                                {incident.approvalStatus || "-"}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4">
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => setEditingIncident(incident)}
@@ -550,7 +606,7 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Modals */}
+    
       {editing && !editing.id && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <PatientForm onSave={savePatient} onCancel={() => setEditing(null)} />
