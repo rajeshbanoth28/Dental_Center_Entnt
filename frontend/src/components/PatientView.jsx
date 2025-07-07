@@ -35,17 +35,25 @@ const PatientView = () => {
 
     const myIncidents = getIncidents()
       .filter((i) => i.patientId === user.patientId)
-      .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
+      .sort(
+        (a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)
+      );
 
     setIncidents(myIncidents);
 
     const future = myIncidents.find(
-      (i) => new Date(i.appointmentDate) > new Date()
+      (i) =>
+        new Date(i.appointmentDate) > new Date() && i.status !== "Cancelled"
     );
     setNextAppointment(future || null);
 
-    const completed = myIncidents.filter((i) => i.status === "Completed").length;
-    const upcoming = myIncidents.filter((i) => new Date(i.appointmentDate) > new Date()).length;
+    const completed = myIncidents.filter(
+      (i) => i.status === "Completed"
+    ).length;
+    const upcoming = myIncidents.filter(
+      (i) =>
+        new Date(i.appointmentDate) > new Date() && i.status !== "Cancelled"
+    ).length;
     const totalCost = myIncidents.reduce((sum, i) => sum + (i.cost || 0), 0);
 
     setStats({
@@ -137,7 +145,9 @@ const PatientView = () => {
                 <h1 className="text-2xl font-bold text-gray-900">
                   Welcome back, {patient?.name || "Patient"}
                 </h1>
-                <p className="text-gray-600 mt-1">Manage your healthcare journey</p>
+                <p className="text-gray-600 mt-1">
+                  Manage your healthcare journey
+                </p>
               </div>
             </div>
             <div className="flex space-x-2">
@@ -173,10 +183,30 @@ const PatientView = () => {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard icon={Activity} title="Total Appointments" value={stats.total} color="blue" />
-          <StatCard icon={Calendar} title="Completed" value={stats.completed} color="emerald" />
-          <StatCard icon={Clock} title="Upcoming" value={stats.upcoming} color="amber" />
-          <StatCard icon={DollarSign} title="Total Cost" value={`₹${stats.totalCost.toLocaleString()}`} color="purple" />
+          <StatCard
+            icon={Activity}
+            title="Total Appointments"
+            value={stats.total}
+            color="blue"
+          />
+          <StatCard
+            icon={Calendar}
+            title="Completed"
+            value={stats.completed}
+            color="emerald"
+          />
+          <StatCard
+            icon={Clock}
+            title="Upcoming"
+            value={stats.upcoming}
+            color="amber"
+          />
+          <StatCard
+            icon={DollarSign}
+            title="Total Cost"
+            value={`₹${stats.totalCost.toLocaleString()}`}
+            color="purple"
+          />
         </div>
 
         {nextAppointment && (
@@ -187,7 +217,9 @@ const PatientView = () => {
                   <Calendar className="h-5 w-5" />
                   <h2 className="text-xl font-semibold">Next Appointment</h2>
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{nextAppointment.title}</h3>
+                <h3 className="text-2xl font-bold mb-2">
+                  {nextAppointment.title}
+                </h3>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-2 sm:space-y-0 text-blue-100">
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4" />
@@ -197,7 +229,10 @@ const PatientView = () => {
                     <span className="h-4 w-4 text-center">
                       {getStatusIcon(nextAppointment.status)}
                     </span>
-                    <span>{nextAppointment.status}</span>
+                    <span>
+                      {nextAppointment.status} ({nextAppointment.approvalStatus}
+                      )
+                    </span>
                   </div>
                 </div>
               </div>
@@ -210,9 +245,13 @@ const PatientView = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <FileText className="h-6 w-6 text-gray-700" />
-              <h2 className="text-xl font-bold text-gray-900">Appointment History</h2>
+              <h2 className="text-xl font-bold text-gray-900">
+                Appointment History
+              </h2>
             </div>
-            <span className="text-sm text-gray-500">{incidents.length} total records</span>
+            <span className="text-sm text-gray-500">
+              {incidents.length} total records
+            </span>
           </div>
 
           {incidents.length === 0 ? (
@@ -220,8 +259,12 @@ const PatientView = () => {
               <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="h-8 w-8 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-lg">No appointments recorded yet</p>
-              <p className="text-gray-400 text-sm mt-2">Your appointment history will appear here</p>
+              <p className="text-gray-500 text-lg">
+                No appointments recorded yet
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                Your appointment history will appear here
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -233,13 +276,16 @@ const PatientView = () => {
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     <div className="flex-1 space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900">{inc.title}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {inc.title}
+                        </h3>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
                             inc.status
                           )}`}
                         >
-                          {getStatusIcon(inc.status)} {inc.status}
+                          {getStatusIcon(inc.status)} {inc.status} (
+                          {inc.approvalStatus})
                         </span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -254,13 +300,27 @@ const PatientView = () => {
                           </div>
                         )}
                       </div>
-                      {inc.description && <p className="text-sm text-gray-700">🗒️ {inc.description}</p>}
-                      {inc.treatment && <p className="text-sm text-blue-800">💉 {inc.treatment}</p>}
-                      {inc.nextDate && <p className="text-sm text-amber-800">Next Visit: {inc.nextDate}</p>}
+                      {inc.description && (
+                        <p className="text-sm text-gray-700">
+                          🗒️ {inc.description}
+                        </p>
+                      )}
+                      {inc.treatment && (
+                        <p className="text-sm text-blue-800">
+                          💉 {inc.treatment}
+                        </p>
+                      )}
+                      {inc.nextDate && (
+                        <p className="text-sm text-amber-800">
+                          Next Visit: {inc.nextDate}
+                        </p>
+                      )}
                     </div>
                     {inc.files?.length > 0 && (
                       <div className="lg:w-64">
-                        <h4 className="text-sm font-medium text-gray-900 mb-2">Attachments</h4>
+                        <h4 className="text-sm font-medium text-gray-900 mb-2">
+                          Attachments
+                        </h4>
                         <div className="space-y-2">
                           {inc.files.map((file, idx) => (
                             <button
